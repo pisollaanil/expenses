@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Roommate Expense Tracker</title>
+    <link rel="stylesheet" href="styles.css">
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+</head>
+<body>
+    <div class="container">
+        <h1>Roommate Expense Tracker</h1>
+        
+        <div class="balance-container">
+            <h2>Current Balance</h2>
+            <div id="balance">$0.00</div>
+        </div>
+        
+        <div class="add-expense">
+            <h2>Add New Expense</h2>
+            <form id="expense-form">
+                <div class="form-group">
+                    <label for="name">Roommate Name:</label>
+                    <input type="text" id="name" required>
+                </div>
+                <div class="form-group">
+                    <label for="amount">Amount ($):</label>
+                    <input type="number" id="amount" step="0.01" min="0.01" required>
+                </div>
+                <div class="form-group">
+                    <label for="description">Description:</label>
+                    <input type="text" id="description" required>
+                </div>
+                <button type="submit">Add Expense</button>
+            </form>
+        </div>
+        
+        <div class="expense-history">
+            <h2>Expense History</h2>
+            <div id="expense-list"></div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>

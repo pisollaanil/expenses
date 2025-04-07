@@ -1,4 +1,4 @@
-// YOUR FIREBASE CONFIG (from your project)
+// YOUR FIREBASE CONFIG
 const firebaseConfig = {
   apiKey: "AIzaSyA4bpwi7aFNxDJOiVn9s19M39SpLZNrjvA",
   authDomain: "roommate-expenses-f27db.firebaseapp.com",
@@ -17,8 +17,6 @@ const expenseForm = document.getElementById('expense-form');
 const balanceDisplay = document.getElementById('balance');
 const expenseList = document.getElementById('expense-list');
 
-let currentBalance = 0;
-
 // Add Expense to Firebase
 expenseForm.addEventListener('submit', async (e) => {
     e.preventDefault();
@@ -35,26 +33,25 @@ expenseForm.addEventListener('submit', async (e) => {
             timestamp: firebase.firestore.FieldValue.serverTimestamp()
         });
         
-        currentBalance -= amount;
-        updateBalanceDisplay();
-        expenseForm.reset();
-        
-        if (currentBalance <= 0) {
-            alert('Balance is zero! Add more money.');
-        }
+        expenseForm.reset(); // Clear form
     } catch (error) {
         console.error("Error adding expense: ", error);
         alert("Error adding expense. Please try again.");
     }
 });
 
-// Real-time updates
+// Real-time updates (FIXED BALANCE CALCULATION)
 db.collection('expenses')
   .orderBy('timestamp', 'desc')
   .onSnapshot((snapshot) => {
+    let totalBalance = 0;
     expenseList.innerHTML = '';
+    
     snapshot.forEach(doc => {
         const expense = doc.data();
+        totalBalance -= expense.amount; // Subtract each expense
+        
+        // Add to history
         const expenseItem = document.createElement('div');
         expenseItem.className = 'expense-item';
         expenseItem.innerHTML = `
@@ -66,9 +63,13 @@ db.collection('expenses')
         `;
         expenseList.appendChild(expenseItem);
     });
+    
+    // Update balance display
+    balanceDisplay.textContent = `$${totalBalance.toFixed(2)}`;
+    balanceDisplay.classList.toggle('zero-balance', totalBalance <= 0);
+    
+    // Alert if balance is zero
+    if (totalBalance <= 0) {
+        alert('Balance is zero! Add more money.');
+    }
 });
-
-function updateBalanceDisplay() {
-    balanceDisplay.textContent = `$${currentBalance.toFixed(2)}`;
-    balanceDisplay.classList.toggle('zero-balance', currentBalance <= 0);
-}
